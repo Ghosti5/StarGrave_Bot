@@ -179,15 +179,15 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
         console.log(interaction.data.name);
 
         if (interaction.data.name === 'connectdiscord') {
-            await connectDiscordHandler(interaction);
+            connectDiscordHandler(interaction);
         }
 
         if (interaction.data.name === 'blacklist') {
-            await blacklistHandler(interaction);
+            blacklistHandler(interaction);
         }
 
         if (interaction.data.name === 'checkuser') {
-            await checkUserHandler(interaction);
+            checkUserHandler(interaction);
         }
     }
 
