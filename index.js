@@ -9,14 +9,14 @@ const GUILD_ID = process.env.GUILD_ID
 const googapi = process.env.GOOGLEAPI
 const spread = process.env.SPREADS
 
-const client = new Client({ intents: [Intents.FLAGS.DIRECT_MESSAGES] });
+
 const axios = require('axios')
 const express = require('express');
 const { InteractionType, InteractionResponseType, verifyKeyMiddleware } = require('discord-interactions');
 const { google } = require('googleapis');
 const sheets = google.sheets({
     version: 'v4',
-    auth: googleapi, // Replace with your API key or OAuth 2.0 credentials
+    auth: googapi, // Replace with your API key or OAuth 2.0 credentials
 });
 
 
