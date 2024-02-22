@@ -164,6 +164,10 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
+app.get('/', async (req, res) => {
+    return res.send('We chill broski')
+})
+
 app.listen(8999, () => {
     console.log('Server is running on port 8999');
 });
