@@ -164,6 +164,72 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
+app.put('/register-commands', async (req, res) => {
+    const slashCommands = [
+        {
+            name: 'blacklist',
+            description: 'This will blacklist a user on the database',
+            options: [
+                {
+                    name: 'username',
+                    description: 'The username to blacklist',
+                    type: 'USER',
+                    required: true,
+                },
+                {
+                    name: 'SwitchTo',
+                    description: 'What you are switching their blacklist state to',
+                    type: 'STRING',
+                    required: true,
+                    choices: [
+                        { name: 'Yes', value: 'yes' },
+                        { name: 'No', value: 'no' }
+                    ]
+                },
+            ],
+        },
+        {
+            name: 'checkuser',
+            description: 'This will give all the data on a specific person',
+            options: [
+                {
+                    name: 'username',
+                    description: 'The username to check',
+                    type: 'STRING',
+                    required: true,
+                },
+            ],
+        },
+        {
+            name: 'connectdiscord',
+            description: 'Whenever someone joins it will connect their discord with their database var',
+            options: [
+                {
+                    name: 'username',
+                    description: 'The username to connect',
+                    type: 'USER',
+                    required: true,
+                },
+                {
+                    name: 'vrchat_user',
+                    description: 'The VRChat username',
+                    type: 'STRING',
+                    required: true,
+                },
+            ],
+        }
+    ];
+
+    try {
+        const response = await discord_api.put(`/applications/${APPLICATION_ID}/commands`, slashCommands);
+        console.log(response.data);
+        return res.send('Slash commands registered successfully');
+    } catch (error) {
+        console.error('Error registering slash commands:', error.response?.data || error.message);
+        return res.status(500).send('Error registering slash commands');
+    }
+});
+
 app.get('/', async (req, res) => {
     return res.send('We chill broski')
 })
