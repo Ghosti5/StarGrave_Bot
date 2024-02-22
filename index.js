@@ -1,9 +1,14 @@
 require('dotenv').config();
-const { Client, Intents, MessageEmbed } = require('discord.js');
+const { Client, GatewayIntentBits, MessageEmbed } = require('discord.js');
 const { google } = require('googleapis');
 const axios = require('axios');
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.MessageContent
+    ]
+})
 
 const googapi = process.env.GOOGLEAPI;
 const spread = process.env.SPREADS;
