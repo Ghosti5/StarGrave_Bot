@@ -164,7 +164,7 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-app.put('/register-commands', async (req, res) => {
+app.post('/register-commands', async (req, res) => {
     const slashCommands = [
         {
             name: 'blacklist',
