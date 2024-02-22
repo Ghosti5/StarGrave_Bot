@@ -2,7 +2,7 @@ require('dotenv').config();
 const { Client, GatewayIntentBits, MessageEmbed } = require('discord.js');
 const { google } = require('googleapis');
 const axios = require('axios');
-
+const app = express();
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -163,6 +163,8 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-
+app.listen(8999, () => {
+    console.log('Server is running on port 8999');
+});
 
 client.login(process.env.TOKEN);
