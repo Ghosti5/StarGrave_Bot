@@ -198,46 +198,51 @@ app.post('/interactions', verifyKeyMiddleware(PUBLIC_KEY), async (req, res) => {
 app.get('/register_commands', async (req, res) => {
     let slash_commands = [
         {
-            "name": "blacklist",
-            "description": "This will blacklist a user on the database",
-            "options": [
+            name: "blacklist",
+            description: "This will blacklist a user on the database",
+            options: [
                 {
-                    "name": "username",
-                    "description": "The username to blacklist",
-                    "type": 6 // Assuming this is a string type, you may need to adjust according to Discord API documentation
+                    name: "username",
+                    description: "The username to blacklist",
+                    type: 6,
+                    required: true,
                 },
                 {
-                    "name": "SwitchTo",
-                    "description": "What you are switching their blacklist state to",
-                    "type": 5
-                }
+                    name: "SwitchTo",
+                    description: "What you are switching their blacklist state to",
+                    type: 5,
+                    required: true,
+                },
             ]
         },
         {
-            "name": "checkuser",
-            "description": "This will give all the data on a specific person",
-            "options": [
+            name: "checkuser",
+            description: "This will give all the data on a specific person",
+            options: [
                 {
-                    "name": "username",
-                    "description": "The username to check",
-                    "type": 6 // Assuming this is a string type, you may need to adjust according to Discord API documentation
-                }
+                    name: "username",
+                    description: "The username to check",
+                    type: 6,
+                    required: true,
+                },
             ]
         },
         {
-            "name": "connectdiscord",
-            "description": "Whenever someone joins it will connect their discord with their database var",
-            "options": [
+            name: "connectdiscord",
+            description: "Whenever someone joins it will connect their discord with their database var",
+            options: [
                 {
-                    "name": "username",
-                    "description": "The username to connect",
-                    "type": 6 // Assuming this is a string type, you may need to adjust according to Discord API documentation
+                    name: "username",
+                    description: "The username to connect",
+                    type: 6,
+                    required: true,
                 },
                 {
-                    "name": "vrchat_user",
-                    "description": "The VRChat username",
-                    "type": 3 // Assuming this is a string type, you may need to adjust according to Discord API documentation
-                }
+                    name: "vrchat_user",
+                    description: "The VRChat username",
+                    type: 3,
+                    required: true,
+                },
             ]
         }
     ];
