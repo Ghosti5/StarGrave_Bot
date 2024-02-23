@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { Client, GatewayIntentBits, MessageEmbed } = require('discord.js');
+
 const { google } = require('googleapis');
 const axios = require('axios');
 const express = require('express');
@@ -34,6 +35,61 @@ const sheets = google.sheets({
     auth: googapi,
 });
 
+
+const slashCommands = [
+    {
+        name: 'blacklist',
+        description: 'This will blacklist a user on the database',
+        options: [
+            {
+                name: 'username',
+                description: 'The username to blacklist',
+                type: 'USER',
+                required: true,
+            },
+            {
+                name: 'SwitchTo',
+                description: 'What you are switching their blacklist state to',
+                type: 'STRING',
+                required: true,
+                choices: [
+                    { name: 'Yes', value: 'yes' },
+                    { name: 'No', value: 'no' }
+                ]
+            },
+        ],
+    },
+    {
+        name: 'checkuser',
+        description: 'This will give all the data on a specific person',
+        options: [
+            {
+                name: 'username',
+                description: 'The username to check',
+                type: 'STRING',
+                required: true,
+            },
+        ],
+    },
+    {
+        name: 'connectdiscord',
+        description: 'Whenever someone joins it will connect their discord with their database var',
+        options: [
+            {
+                name: 'username',
+                description: 'The username to connect',
+                type: 'USER',
+                required: true,
+            },
+            {
+                name: 'vrchat_user',
+                description: 'The VRChat username',
+                type: 'STRING',
+                required: true,
+            },
+        ],
+    }
+];
 async function findRowIndexByDiscordUsername(username) {
     const response = await sheets.spreadsheets.values.get({
         spreadsheetId: spread,
@@ -171,61 +227,19 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
+// Register slash commands
+async function registerCommands() {
+    try {
+        const guildId = process.env.GUILD_ID; // Replace with your guild ID
+        const commands = await client.guilds.cache.get(guildId)?.commands.set(slashCommands);
+        console.log('Slash commands registered:', commands.map(command => command.name).join(', '));
+    } catch (error) {
+        console.error('Error registering slash commands:', error);
+    }
+}
+
 app.post('/register-commands', async (req, res) => {
-    const slashCommands = [
-        {
-            name: 'blacklist',
-            description: 'This will blacklist a user on the database',
-            options: [
-                {
-                    name: 'username',
-                    description: 'The username to blacklist',
-                    type: 'USER',
-                    required: true,
-                },
-                {
-                    name: 'SwitchTo',
-                    description: 'What you are switching their blacklist state to',
-                    type: 'STRING',
-                    required: true,
-                    choices: [
-                        { name: 'Yes', value: 'yes' },
-                        { name: 'No', value: 'no' }
-                    ]
-                },
-            ],
-        },
-        {
-            name: 'checkuser',
-            description: 'This will give all the data on a specific person',
-            options: [
-                {
-                    name: 'username',
-                    description: 'The username to check',
-                    type: 'STRING',
-                    required: true,
-                },
-            ],
-        },
-        {
-            name: 'connectdiscord',
-            description: 'Whenever someone joins it will connect their discord with their database var',
-            options: [
-                {
-                    name: 'username',
-                    description: 'The username to connect',
-                    type: 'USER',
-                    required: true,
-                },
-                {
-                    name: 'vrchat_user',
-                    description: 'The VRChat username',
-                    type: 'STRING',
-                    required: true,
-                },
-            ],
-        }
-    ];
+    
 
     try {
         const response = await discord_api.put(`/applications/${APPLICATION_ID}/commands`, slashCommands);
@@ -243,6 +257,7 @@ app.get('/', async (req, res) => {
 
 app.listen(8999, () => {
     console.log('Server is running on port 8999');
+    await registerCommands();
 });
 
 client.login(process.env.TOKEN);
