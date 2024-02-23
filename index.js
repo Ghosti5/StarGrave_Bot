@@ -11,9 +11,16 @@ const client = new Client({
     ]
 })
 
-const googapi = process.env.GOOGLEAPI;
-const spread = process.env.SPREADS;
+// Define your application ID
+const APPLICATION_ID = process.env.APPLICATION_ID;
 
+// Define your Discord bot token
+
+// Define your Google API key
+const googapi = process.env.GOOGLEAPI;
+
+// Define your Google Sheets spreadsheet ID
+const spread = process.env.SPREADS;
 const discord_api = axios.create({
     baseURL: 'https://discord.com/api/',
     timeout: 3000,
