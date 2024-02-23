@@ -256,8 +256,9 @@ app.get('/', async (req, res) => {
 })
 
 app.listen(8999, () => {
+    registerCommands();
     console.log('Server is running on port 8999');
-    await registerCommands();
+
 });
 
 client.login(process.env.TOKEN);
