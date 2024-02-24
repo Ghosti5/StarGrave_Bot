@@ -356,9 +356,9 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-app.post('/interactions', verifyKeyMiddleware(process.env.APPLICATION_ID), async (req, res) => {
+app.post('/interactions', async (req, res) => {
     try {
-        const interaction = req;
+        const interaction = req.body;
         console.log(interaction);
         
 
