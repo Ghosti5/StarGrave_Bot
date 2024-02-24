@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, MessageEmbed } = require('discord.js');
+const { REST,Routes, Client, GatewayIntentBits, MessageEmbed } = require('discord.js');
 
 const { google } = require('googleapis');
 const axios = require('axios');
@@ -329,11 +329,16 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
+const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 // Register slash commands
 async function registerCommands() {
     try {
         const guildId = process.env.GUILD_ID; // Replace with your guild ID
-        const commands = await client.guilds.cache.get(guildId)?.commands.set(slashCommands);
+        await rest.put(
+            Routes.applicationGuildCommands(process.env.APPLICATION_ID, process.env.GUILD_ID), {
+            body: slashCommands
+        }
+        );
         console.log('Slash commands registered:', commands.map(command => command.name).join(', '));
     } catch (error) {
         console.error('Error registering slash commands:', error);
