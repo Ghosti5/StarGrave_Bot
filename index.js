@@ -48,7 +48,7 @@ const slashCommands = [
                 required: true,
             },
             {
-                name: 'SwitchTo',
+                name: 'switch_to',
                 description: 'What you are switching their blacklist state to',
                 type: 5,
                 required: true,
