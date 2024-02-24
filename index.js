@@ -357,7 +357,7 @@ client.on('interactionCreate', async interaction => {
 
 app.post('/interactions', async (req, res) => {
     try {
-        const interaction = req.data;
+        const interaction = req;
         console.log(interaction);
         
 
