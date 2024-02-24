@@ -312,19 +312,7 @@ async function checkUserHandler(interaction) {
     }
 }
 
-client.on('interactionCreate', async interaction => {
-    if (!interaction.isCommand()) return;
 
-    if (interaction.commandName === 'connectdiscord') {
-        await connectDiscordHandler(interaction);
-    } else if (interaction.commandName === 'blacklist') {
-        await blacklistHandler(interaction);
-    } else if (interaction.commandName === 'checkuser') {
-        await checkUserHandler(interaction);
-    } else if (interaction.commandName === 'connectdiscordcustomer') {
-        await connectDiscordHandlerCustomer(interaction);
-    }
-});
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 // Register slash commands
@@ -352,6 +340,48 @@ app.post('/register-commands', async (req, res) => {
 app.get('/', async (req, res) => {
     return res.send('We chill broski')
 })
+
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) return;
+
+    if (interaction.commandName === 'connectdiscord') {
+        await connectDiscordHandler(interaction);
+    } else if (interaction.commandName === 'blacklist') {
+        await blacklistHandler(interaction);
+    } else if (interaction.commandName === 'checkuser') {
+        await checkUserHandler(interaction);
+    } else if (interaction.commandName === 'connectdiscordcustomer') {
+        await connectDiscordHandlerCustomer(interaction);
+    }
+});
+
+app.get('/interactions', async (req, res) => {
+    try {
+        const interaction = req.body;
+
+        // Check if the received interaction is a command
+        if (!interaction.isCommand()) {
+            return res.status(200).end(); // Not a command, so just acknowledge receipt
+        }
+
+        // Handle different command types
+        if (interaction.commandName === 'connectdiscord') {
+            await connectDiscordHandler(interaction);
+        } else if (interaction.commandName === 'blacklist') {
+            await blacklistHandler(interaction);
+        } else if (interaction.commandName === 'checkuser') {
+            await checkUserHandler(interaction);
+        } else if (interaction.commandName === 'connectdiscordcustomer') {
+            await connectDiscordHandlerCustomer(interaction);
+        }
+
+        // Respond with 200 OK
+        res.status(200).end();
+    } catch (error) {
+        console.error('Error handling Discord interaction:', error);
+        res.status(500).end(); // Respond with 500 Internal Server Error if an error occurs
+    }
+});
 
 app.listen(8999, () => {
     registerCommands();
