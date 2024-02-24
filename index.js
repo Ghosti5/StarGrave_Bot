@@ -339,7 +339,7 @@ async function registerCommands() {
             body: slashCommands
         }
         );
-        console.log('Slash commands registered:', commands.map(command => command.name).join(', '));
+        console.log('Slash commands registered:');
     } catch (error) {
         console.error('Error registering slash commands:', error);
     }
