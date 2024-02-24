@@ -355,7 +355,7 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-app.get('/interactions', async (req, res) => {
+app.post('/interactions', async (req, res) => {
     try {
         const interaction = req.body;
 
