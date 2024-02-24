@@ -345,14 +345,8 @@ async function registerCommands() {
 app.post('/register-commands', async (req, res) => {
     
 
-    try {
-        const response = await discord_api.put(`/applications/${APPLICATION_ID}/commands`, slashCommands);
-        console.log(response.data);
-        return res.send('Slash commands registered successfully');
-    } catch (error) {
-        console.error('Error registering slash commands:', error.response?.data || error.message);
-        return res.status(500).send('Error registering slash commands');
-    }
+    registerCommands();
+    return res.send('Pizza')
 });
 
 app.get('/', async (req, res) => {
