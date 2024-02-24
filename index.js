@@ -88,6 +88,24 @@ const slashCommands = [
                 required: true,
             },
         ],
+    },
+    {
+        name: 'connectdiscordcustomer',
+        description: 'Whenever someone joins it will connect their discord with our bots',
+        options: [
+            {
+                name: 'username',
+                description: 'Your discord Username',
+                type: 'USER',
+                required: true,
+            },
+            {
+                name: 'vrchat_user',
+                description: 'Your VRChat username',
+                type: 'STRING',
+                required: true,
+            },
+        ],
     }
 ];
 async function findRowIndexByDiscordUsername(username) {
@@ -143,7 +161,90 @@ async function connectDiscordHandler(interaction) {
     } else {
         await interaction.reply(`Failed to connect ${discordUsername}`);
     }
+    const guild = await interaction.client.guilds.fetch('1210096146823774298'); // Fetch the guild
+    const member = await guild.members.fetch({ user: interaction.member.id, force: true }); // Fetch the member
+    const role = await guild.roles.fetch('1210743116534124624'); // Fetch the role
+    await member.roles.add(role); // Add the role to the member
 }
+
+async function connectDiscordHandlerCustomer(interaction) {
+    const discordUsername = interaction.member.user.username;
+    const exampleValue = interaction.options.getString('username');
+
+    // Convert exampleValue to lowercase
+    const vrchatUsername = exampleValue.toLowerCase();
+
+    // Find the row index of the VRChat username
+    const rowIndex = await findRowIndexByUsername(vrchatUsername);
+    if (rowIndex) {
+        // If the VRChat username exists, update the Discord username in the corresponding row
+        await sheets.spreadsheets.values.update({
+            spreadsheetId: spread,
+            range: `Sheet1!F${rowIndex}`,
+            valueInputOption: 'RAW',
+            requestBody: {
+                values: [[discordUsername]],
+            },
+        });
+
+        await interaction.reply(`${discordUsername} is now connected`);
+    } else {
+        // If the VRChat username doesn't exist, ask for the person to respond with their birthday
+        await interaction.reply(`Please respond with your birthday in the format "year/month/day" to proceed.`);
+
+        // Handle the user's response
+        const birthdayResponse = await interaction.channel.awaitMessages({ max: 1, time: 60000, errors: ['time'] });
+        const birthdayStr = birthdayResponse.first().content.trim();
+
+        // Parse the birthday and calculate the age
+        const [year, month, day] = birthdayStr.split('/');
+        const birthday = new Date(year, month - 1, day);
+        const age = calculateAge(new Date(), birthday);
+
+        // Format the birthday
+        const formattedBirthday = `${month}/${day}/${year} (${age} yrs old)`;
+
+        // Add a new row with the VRChat username, birthday, and Discord username
+        await sheets.spreadsheets.values.append({
+            spreadsheetId: spread,
+            range: 'Sheet1',
+            valueInputOption: 'RAW',
+            requestBody: {
+                values: [[vrchatUsername, formattedBirthday, '', '', '', discordUsername]],
+            },
+        });
+
+        await interaction.reply(`${discordUsername} is now connected`);
+
+        // Check if the calculated age is over 18
+        if (age >= 18) {
+            // Add role to the user
+            const guild = await interaction.client.guilds.fetch('1210096146823774298'); // Fetch the guild
+            const member = await guild.members.fetch({ user: interaction.member.id, force: true }); // Fetch the member
+            const role = await guild.roles.fetch('1210743116534124624'); // Fetch the role
+            await member.roles.add(role); // Add the role to the member
+        } else {
+            // Send message requesting manual assistance
+            const user = await interaction.client.users.fetch(interaction.member.id); // Fetch the user
+            const manualAssistanceMessage = `@1210117292894191656 Please manually assist ${user}.`;
+            const assistanceChannel = interaction.client.channels.cache.get('1210123653992288306'); // Fetch the assistance channel
+            await assistanceChannel.send(manualAssistanceMessage);
+
+            // Calculate days until the user turns 18
+            const daysUntil18 = Math.ceil((new Date(year + 18, month - 1, day) - new Date()) / (1000 * 60 * 60 * 24));
+
+            // Create embed with user information
+            const embed = new Discord.MessageEmbed()
+                .setTitle(user.username)
+                .setDescription(`This user needs manual assistance regarding their birthday. It says here they are ${age} which is under 18. They are not set to turn 18 for ${daysUntil18} days.`);
+
+            // Send the embed in the assistance channel
+            const assistanceChannel = interaction.client.channels.cache.get('1210123653992288306'); // Fetch the assistance channel
+            await assistanceChannel.send({ embeds: [embed] });
+        }
+    }
+}
+
 
 async function blacklistHandler(interaction) {
     const username = interaction.options.getString('username').replace('@', '');
@@ -224,6 +325,8 @@ client.on('interactionCreate', async interaction => {
         await blacklistHandler(interaction);
     } else if (interaction.commandName === 'checkuser') {
         await checkUserHandler(interaction);
+    } else if (interaction.commandName === 'connectdiscordcustomer') {
+        await connectDiscordHandlerCustomer(interaction);
     }
 });
 
