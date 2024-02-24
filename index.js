@@ -8,10 +8,11 @@ const app = express();
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages  ,
-        GatewayIntentBits.MessageContent
-    ]
-})
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers,
+    ],
+});
 
 // Define your application ID
 const APPLICATION_ID = process.env.APPLICATION_ID;
