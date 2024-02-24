@@ -358,7 +358,7 @@ client.on('interactionCreate', async interaction => {
 app.post('/interactions', async (req, res) => {
     try {
         const interaction = req.body;
-
+        console.log(interaction);
         
 
         // Handle different command types
