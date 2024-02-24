@@ -1,10 +1,10 @@
-require('dotenv').config();
-const { REST,Routes, Client, GatewayIntentBits, MessageEmbed } = require('discord.js');
+
+const { Client, GatewayIntentBits, MessageEmbed } = require('discord.js');
 
 const { google } = require('googleapis');
-const axios = require('axios');
-const express = require('express');
-const app = express();
+
+
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -14,8 +14,6 @@ const client = new Client({
     ],
 });
 
-// Define your application ID
-const APPLICATION_ID = process.env.APPLICATION_ID;
 
 // Define your Discord bot token
 
@@ -24,14 +22,6 @@ const googapi = process.env.GOOGLEAPI;
 
 // Define your Google Sheets spreadsheet ID
 const spread = process.env.SPREADS;
-const discord_api = axios.create({
-    baseURL: 'https://discord.com/api/',
-    timeout: 3000,
-    headers: {
-        "Authorization": `Bot ${process.env.TOKEN}`
-    }
-});
-
 const sheets = google.sheets({
     version: 'v4',
     auth: googapi,
@@ -316,7 +306,7 @@ async function checkUserHandler(interaction) {
 
 
 
-const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
+
 // Register slash commands
 async function registerCommands() {
     try {
@@ -332,35 +322,22 @@ async function registerCommands() {
     }
 }
 
-app.post('/register-commands', async (req, res) => {
-    
+client.on('ready', () => console.log('${client.user.tag} has logged in'));
 
-    registerCommands();
-    return res.send('Pizza')
-});
-
-app.get('/', async (req, res) => {
-    return res.send('We chill broski')
-})
-
-client.on('interactionCreate', async interaction => {
-    if (!interaction.isCommand()) return;
+client.on('interactionCreate', interaction => {
+    if (!interaction.isChatInputCommand()) return;
     console.log(interaction);
 
     if (interaction.commandName === 'connectdiscord') {
-        await connectDiscordHandler(interaction);
+        connectDiscordHandler(interaction);
     } else if (interaction.commandName === 'blacklist') {
-        await blacklistHandler(interaction);
+        blacklistHandler(interaction);
     } else if (interaction.commandName === 'checkuser') {
-        await checkUserHandler(interaction);
+        checkUserHandler(interaction);
     } else if (interaction.commandName === 'connectdiscordcustomer') {
-        await connectDiscordHandlerCustomer(interaction);
+        connectDiscordHandlerCustomer(interaction);
     }
 });
 
-app.listen(8999, () => {
-    console.log('Server is running on port 8999');
-
-});
 
 client.login(process.env.TOKEN);
