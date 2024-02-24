@@ -44,18 +44,15 @@ const slashCommands = [
             {
                 name: 'username',
                 description: 'The username to blacklist',
-                type: 'USER',
+                type: 6,
                 required: true,
             },
             {
                 name: 'SwitchTo',
                 description: 'What you are switching their blacklist state to',
-                type: 'STRING',
+                type: 5,
                 required: true,
-                choices: [
-                    { name: 'Yes', value: 'yes' },
-                    { name: 'No', value: 'no' }
-                ]
+                
             },
         ],
     },
@@ -66,7 +63,7 @@ const slashCommands = [
             {
                 name: 'username',
                 description: 'The username to check',
-                type: 'STRING',
+                type: 3,
                 required: true,
             },
         ],
@@ -78,13 +75,13 @@ const slashCommands = [
             {
                 name: 'username',
                 description: 'The username to connect',
-                type: 'USER',
+                type: 6,
                 required: true,
             },
             {
                 name: 'vrchat_user',
                 description: 'The VRChat username',
-                type: 'STRING',
+                type: 3,
                 required: true,
             },
         ],
@@ -96,13 +93,13 @@ const slashCommands = [
             {
                 name: 'username',
                 description: 'Your discord Username',
-                type: 'USER',
+                type: 6,
                 required: true,
             },
             {
                 name: 'vrchat_user',
                 description: 'Your VRChat username',
-                type: 'STRING',
+                type: 3,
                 required: true,
             },
         ],
