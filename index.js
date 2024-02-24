@@ -359,10 +359,7 @@ app.post('/interactions', async (req, res) => {
     try {
         const interaction = req.body;
 
-        // Check if the received interaction is a command
-        if (!interaction.isCommand()) {
-            return res.status(200).end(); // Not a command, so just acknowledge receipt
-        }
+        
 
         // Handle different command types
         if (interaction.commandName === 'connectdiscord') {
