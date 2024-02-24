@@ -343,6 +343,7 @@ app.get('/', async (req, res) => {
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
+    console.log(interaction);
 
     if (interaction.commandName === 'connectdiscord') {
         await connectDiscordHandler(interaction);
