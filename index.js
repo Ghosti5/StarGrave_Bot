@@ -8,6 +8,7 @@ const app = express();
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages  ,
         GatewayIntentBits.MessageContent
     ]
 })
@@ -353,31 +354,6 @@ client.on('interactionCreate', async interaction => {
         await checkUserHandler(interaction);
     } else if (interaction.commandName === 'connectdiscordcustomer') {
         await connectDiscordHandlerCustomer(interaction);
-    }
-});
-
-app.post('/interactions', async (req, res) => {
-    try {
-        const interaction = req.body;
-        console.log(interaction);
-        
-
-        // Handle different command types
-        if (interaction.name === 'connectdiscord') {
-            await connectDiscordHandler(interaction);
-        } else if (interaction.name === 'blacklist') {
-            await blacklistHandler(interaction);
-        } else if (interaction.name === 'checkuser') {
-            await checkUserHandler(interaction);
-        } else if (interaction.name === 'connectdiscordcustomer') {
-            await connectDiscordHandlerCustomer(interaction);
-        }
-
-        // Respond with 200 OK
-        res.status(200).end();
-    } catch (error) {
-        console.error('Error handling Discord interaction:', error);
-        res.status(500).end(); // Respond with 500 Internal Server Error if an error occurs
     }
 });
 
