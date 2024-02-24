@@ -5,7 +5,6 @@ const { google } = require('googleapis');
 const axios = require('axios');
 const express = require('express');
 const app = express();
-const { InteractionType, InteractionResponseType, verifyKeyMiddleware } = require('../dist');
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
