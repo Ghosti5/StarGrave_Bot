@@ -364,11 +364,11 @@ app.post('/interactions', async (req, res) => {
         // Handle different command types
         if (interaction.commandName === 'connectdiscord') {
             await connectDiscordHandler(interaction);
-        } else if (interaction.commandName === 'blacklist') {
+        } else if (interaction.data.name === 'blacklist') {
             await blacklistHandler(interaction);
-        } else if (interaction.commandName === 'checkuser') {
+        } else if (interaction.data.name === 'checkuser') {
             await checkUserHandler(interaction);
-        } else if (interaction.commandName === 'connectdiscordcustomer') {
+        } else if (interaction.data.name === 'connectdiscordcustomer') {
             await connectDiscordHandlerCustomer(interaction);
         }
 
