@@ -238,8 +238,7 @@ async function connectDiscordHandlerCustomer(interaction) {
                 .setTitle(user.username)
                 .setDescription(`This user needs manual assistance regarding their birthday. It says here they are ${age} which is under 18. They are not set to turn 18 for ${daysUntil18} days.`);
 
-            // Send the embed in the assistance channel
-            const assistanceChannel = interaction.client.channels.cache.get('1210123653992288306'); // Fetch the assistance channel
+            
             await assistanceChannel.send({ embeds: [embed] });
         }
     }
