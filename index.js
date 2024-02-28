@@ -21,8 +21,8 @@ const SCOPES = [
 ];
 
 const serviceAccountAuth = new JWT({
-    email: creds.client_email,
-    key: creds.private_key,
+    email: process.env.client_email,
+    key: process.env.private_key,
     scopes: SCOPES,
 });
 
@@ -40,7 +40,7 @@ const client = new Client({
 
 
 // Initialize the GoogleSpreadsheet object
-const doc = new GoogleSpreadsheet("1naU1C7zKhWJwdOXg0o5gDant9gAvHRJfyam3t3tuH-0", serviceAccountAuth);
+const doc = new GoogleSpreadsheet(process.env.SPREADS, serviceAccountAuth);
 
 
 
