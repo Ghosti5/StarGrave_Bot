@@ -1,3 +1,6 @@
 node_modules
 .env
 config.json
+/cre.json
+/cre.json
+/service.json
