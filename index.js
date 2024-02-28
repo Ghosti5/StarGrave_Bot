@@ -3,7 +3,7 @@ const { JWT } = require('google-auth-library');
 const { ActionRowBuilder, ButtonBuilder, REST,Routes, Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 // Load service account credentials from the JSON key file
-const creds = require('./service.json');
+
 
 const axios = require('axios');
 const express = require('express');
