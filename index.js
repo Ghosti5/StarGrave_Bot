@@ -47,8 +47,25 @@ const doc = new GoogleSpreadsheet(process.env.SPREADS, serviceAccountAuth);
 
 
 app.get('/', (req, res) => {
+    if (client && client.isReady()) {
+        res.status(200).send('Discord bot is running.');
+    } else {
+        // If the bot is not running, restart it
+        startDiscordBot();
+        res.status(200).send('Restarted Discord bot.');
+    }
     res.sendFile(__dirname + '/index.html');
 });
+
+
+
+// Function to start the Discord bot
+function startDiscordBot() {
+    client.login(process.env.TOKEN)
+        .then(() => console.log('Discord bot started successfully'))
+        .catch(error => console.error('Error starting Discord bot:', error));
+}
+
 
 const slashCommands = [
     {
