@@ -46,7 +46,9 @@ const client = new Client({
 const doc = new GoogleSpreadsheet(process.env.SPREADS, serviceAccountAuth);
 
 
-
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
 
 const slashCommands = [
     {
