@@ -3,11 +3,12 @@ const { JWT } = require('google-auth-library');
 const { ActionRowBuilder, ButtonBuilder, REST,Routes, Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 // Load service account credentials from the JSON key file
+const express = require('express');
+const { json } = require('express');
+const app = express();
 
 
 const axios = require('axios');
-const express = require('express');
-const app = express();
 const discord_api = axios.create({
     baseURL: 'https://discord.com/api/',
     timeout: 3000,
@@ -20,10 +21,12 @@ const SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets',
 ];
 
+app.use(express.json());
+
 const serviceAccountAuth = new JWT({
     email: process.env.client_email,
     key: process.env.private_key,
-    scopes: SCOPES,
+        scopes: SCOPES,
 });
 
 const client = new Client({
@@ -238,18 +241,18 @@ function createStatusEmbed(username, score) {
         "Definitely over 18."
     ];
 
-    const quip = quips[score];
+    const quip = quips[score - 1];
 
     return new EmbedBuilder()
         .setTitle(`${username}'s 18+ Status`)
         .setDescription(`${username} has scored a ${score}.`)
-        .addField('Status', status)
-        .addField('Rating', quip);
+        .addFields({ name: 'Status', value: status },
+            { name: 'Rating', value: quip.toString() });
 }
 async function investigateUsers(interaction) {
     try {
 
-        interaction.reply({ content: "Okay! I just sent you a dm.", time: 2000, ephemeral: true });
+        interaction.reply({ content: "Okay! I just sent you a dm.", time: 99992000, ephemeral: true });
         // Load the Google Spreadsheet using service account credentials
         
         await doc.loadInfo();
@@ -259,10 +262,10 @@ async function investigateUsers(interaction) {
         const rows = await sheet.getRows();
 
         // Filter rows based on column S and Discord username
-        const filteredRows = rows.filter(row => row.get("Investigated").toLowerCase() === 'no' && row.get("Discord User") !== '');
+        const filteredRows = rows.filter(row => row.get("Investigated").toLowerCase() === 'no');
         if (filteredRows.length < 1) {
             const dmChannel = await interaction.user.createDM();
-            const message = await dmChannel.send({ content: "It seems there is nothing left to be investigated. Come back later!", time: 3000 });
+            const message = await dmChannel.send({ content: "It seems there is nothing left to be investigated. Come back later!", time: 99993000 });
             return;
         }
         // Iterate through filtered rows
@@ -292,13 +295,13 @@ async function investigateUsers(interaction) {
 
             // Wait for user to click the "Ready" button
             const filter = i => i.customId === 'ready' && i.user.id === discordId;
-            const collected = await dmChannel.awaitMessageComponent({ filter, time: 60000 });
+            const collected = await dmChannel.awaitMessageComponent({ filter, time: 999960000 });
 
 
 
             // If the user clicks "Ready"
             if (collected.customId === 'ready') {
-                collected.reply({ content: "Great! I will be going through all the the columns of " + row.get("Username") + ". If there is any missing information I will ask you to reply with your input for the field.", time: 30000, ephemeral: true });
+                collected.reply({ content: "Great! I will be going through all the the columns of " + row.get("Username") + ". If there is any missing information I will ask you to reply with your input for the field.", time: 999930000, ephemeral: true });
                 // Iterate through columns and prompt for input
 
 
@@ -312,8 +315,8 @@ async function investigateUsers(interaction) {
                 const userData = {};
                 for (const [column, columnName] of Object.entries(columnMapping)) {
                     if (row.get(columnName) === '') {
-                        const userInput = await promptUserInput(discordId, columnName);
-                        if (userInput.toLowerCase() === 'n/a') {
+                        const [userInput, ifna] = await promptUserInput(discordId, columnName);
+                        if (ifna) {
                             userData[columnName] = row.get(columnName);
                         } else {
                             userData[columnName] = userInput;
@@ -347,15 +350,12 @@ async function investigateUsers(interaction) {
 
                 const investigationMessage = await dmChannel.send({ embeds: [investigationEmbed], components: [investigationActionRow] });
 
-                // Delete the message after 30 seconds
-                setTimeout(() => {
-                    investigationMessage.delete();
-                }, 30000);
+                
 
                 // Wait for user to click the "Ready" button
                 const investigationFilter = i => i.customId === 'investigationReady' && i.user.id === discordId;
-                const investigationCollected = await dmChannel.awaitMessageComponent({ filter: investigationFilter, time: 60000 });
-                investigationCollected.reply({ content: 'Great! We will now perform a quiz about this patron.', time: 30000, ephemeral: true });
+                const investigationCollected = await dmChannel.awaitMessageComponent({ filter: investigationFilter, time: 999960000 });
+                investigationCollected.reply({ content: 'Great! We will now perform a quiz about this patron.', time: 999930000, ephemeral: true });
                 // If the user clicks "Ready" for investigation
                 if (investigationCollected.customId === 'investigationReady') {
                     // Perform 18 and over quiz
@@ -367,17 +367,17 @@ async function investigateUsers(interaction) {
                     await row.save();
                     const sembed = createStatusEmbed(row.get('Username'), score)
                     dmChannel.send({
-                        embeds: [investigationEmbed]
+                        embeds: [sembed]
                     })
 
                 }
             }
         }
         const dmCchannel = await interaction.user.createDM();
-        const message = await dmCchannel.send({ content: "Okay All done investigating! Come back later for more!", time: 3000 });
+        const message = await dmCchannel.send({ content: "Okay All done investigating! Come back later for more!", time: 99993000 });
     } catch (error) {
         console.error('Error in investigateUsers:', error);
-        const dmchannel = interaction.user.createDM();
+        const dmchannel = await interaction.user.createDM();
         dmchannel.send('Error in investigateUsers:' + error)
     }
 }
@@ -413,11 +413,11 @@ async function askQuestion(username, question, questionCount) {
             );
 
         // Send the question with buttons
-        const message = await user.dmChannel.send({ embeds: [createQuestionEmbed(question, questionCount)], components: [row],time: 300000 });
+        const message = await user.dmChannel.send({ embeds: [createQuestionEmbed(question, questionCount)], components: [row],time: 9999300000 });
 
         // Await button interaction from the user
         const filter = i => ['yes', 'no'].includes(i.customId) && i.user.id === username;
-        const collected = await message.awaitMessageComponent({ filter, time: 60000 });
+        const collected = await message.awaitMessageComponent({ filter, time: 999960000 });
 
         // Reply with an ephemeral message indicating the user's response
         await collected.reply({ content: `You answered ${collected.customId}.`, ephemeral: true });
@@ -438,14 +438,55 @@ function createQuestionEmbed(question, questionCount) {
 
 async function promptUserInput(userid, columnName) {
     const user = await client.users.fetch(userid);
-    await user.dmChannel.send({ content: `Hm it seems like we are missing information on the users ${columnName}, Please provide input for ${columnName}: (Say N/A if you don't know what to put or don't have that information)`, time: 30000 });
-    const filter = m => m.author.id === user.id;
-    const response = await user.dmChannel.awaitMessages({ filter, max: 1, time: 60000, errors: ['time'] });
 
+    // Create action row with N/A button
+    const row = new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder()
+                .setCustomId('na')
+                .setLabel('N/A')
+                .setStyle(2) // Use 'SECONDARY' style for additional actions
+        );
 
-    return response.first().content;
-    
+    // Create an embed with the prompt message
+    const embed = new EmbedBuilder()
+        .setTitle('Missing Information')
+        .setDescription(`Hm it seems like we are missing information on the user's ${columnName}. Please provide input for ${columnName}: (Say N/A if you don't know what to put or don't have that information)`);
+
+    await user.dmChannel.send({
+        embeds: [embed],
+        components: [row],
+        time: 999930000
+    });
+
+   
+    const filter = (message) => {
+        return message.author.id === user.id;
+    };
+
+    const collector = user.dmChannel.createMessageCollector({ filter, time: 999960000 });
+
+    return new Promise((resolve, reject) => {
+        collector.on('collect', async message => {
+            if (message.content.toLowerCase() === 'n/a') {
+                resolve(['N/A', true]);
+                collector.stop();
+            } else {
+                
+                resolve([message.content, false]);
+                collector.stop();
+            }
+        });
+
+        collector.on('end', collected => {
+            if (collected.size === 0) {
+                reject('No response received within the time limit.');
+            }
+        });
+    });
 }
+
+
 
 
 
@@ -622,7 +663,7 @@ async function checkUserHandler(interaction) {
 async function promptForBirthday(interaction) {
     await interaction.reply({ content: 'Please respond with your birthday in the format "year/month/day" to proceed.', ephemeral: true });
 
-    const birthdayResponse = await interaction.channel.awaitMessages({ max: 1, time: 60000, errors: ['time'] });
+    const birthdayResponse = await interaction.channel.awaitMessages({ max: 1, time: 999960000, errors: ['time'] });
     return birthdayResponse.first().content.trim();
 }
 
@@ -719,7 +760,6 @@ client.on('ready', () => {
 
 client.on('interactionCreate', interaction => {
     if (!interaction.isChatInputCommand()) return;
-    console.log(interaction);
 
     if (interaction.commandName === 'connectdiscord') {
         connectDiscordHandler(interaction);
@@ -733,6 +773,9 @@ client.on('interactionCreate', interaction => {
         investigateUsers(interaction);
     }
 });
-
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 
 client.login(process.env.TOKEN);
